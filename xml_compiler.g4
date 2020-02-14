@@ -5,8 +5,14 @@ prog : statement+;
 
 TAG : 'node';
 ATTR : 'attr';
+NAME : 'name';
+TEXT : 'text';
+NODES : 'nodes';
+ATTRS : 'attrs';
+GEN : 'generate';
+PRINT : 'print';
 ID : [a-z]+;
-NEWLINE : '\r'? '\n' ;     // return newlines to parser (is end-statement signal)
+NEWLINE : '\r'? '\n' ;
 ASGN : '=';
 APND_ATR : '<';
 APND_TAG : '<<';
@@ -19,9 +25,9 @@ QT : '"';
 O_BKT : '(';
 C_BKT : ')';
 SPC : ' ';
-GEN : 'Generate';
-PRINT : 'print';
 COMMA : ',';
+ARROW : '->';
+
 
 statement: TAG SPC ID O_BKT QT ID QT C_BKT SEMICOLON NEWLINE # tag_assignment
           | ATTR SPC ID O_BKT QT ID QT C_BKT SEMICOLON NEWLINE # attr_assignment
@@ -33,3 +39,9 @@ statement: TAG SPC ID O_BKT QT ID QT C_BKT SEMICOLON NEWLINE # tag_assignment
           | ID SPC APND_ATR SPC ID SEMICOLON NEWLINE # append_atr
           | ID SPC RMV_TAG SPC ID SEMICOLON NEWLINE # remove_tag
           | ID SPC RMV_ATR SPC ID SEMICOLON NEWLINE # remove_atr;
+
+access_info: ID ARROW NAME # access_name
+            | ID ARROW TEXT # access_text
+            | ID ARROW NODES # access_nodes
+            | ID ARROW ATTRS # access_attrs;
+
