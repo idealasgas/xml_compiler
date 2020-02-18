@@ -32,3 +32,9 @@ class MyVisitor(xml_compilerVisitor):
         parent = self.memory[str(ctx.ID()[0])]
         child = self.memory[str(ctx.ID()[1])]
         parent.append(child)
+
+    def visitGen_file(self, ctx):
+        filename = str(ctx.ID()[1]) + ".xml"
+        root = self.memory[str(ctx.ID()[0])]
+        with open(filename, 'wb') as doc:
+            doc.write(etree.tostring(root, pretty_print = True))
