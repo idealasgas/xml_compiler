@@ -15,4 +15,9 @@ class MyVisitor(xml_compilerVisitor):
         value = {}
         value[str(ctx.ID()[1])] = str(ctx.ID()[2])
         self.memory[str(ctx.ID()[0])] = value
-        print(self.memory)
+
+    # root.set("hello", "Huhu")
+    def visitAppend_atr(self, ctx):
+        tag = self.memory[str(ctx.ID()[0])]
+        attribute = self.memory[str(ctx.ID()[1])]
+        tag.set(list(attribute.keys())[0], list(attribute.values())[0])
