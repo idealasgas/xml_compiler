@@ -21,3 +21,10 @@ class MyVisitor(xml_compilerVisitor):
         tag = self.memory[str(ctx.ID()[0])]
         attribute = self.memory[str(ctx.ID()[1])]
         tag.set(list(attribute.keys())[0], list(attribute.values())[0])
+
+    # child.text = 'some text'
+    def visitAdd_text(self, ctx):
+        tag = self.memory[str(ctx.ID()[0])]
+        tag.text = str(ctx.ID()[1])
+        s = etree.tostring(tag, pretty_print=True)
+        print(s)
