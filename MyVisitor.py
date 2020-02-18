@@ -10,3 +10,9 @@ class MyVisitor(xml_compilerVisitor):
     def visitTag_assignment(self, ctx):
         value = etree.Element(str(ctx.ID()[1]))
         self.memory[str(ctx.ID()[0])] = value
+
+    def visitAttr_assignment(self, ctx):
+        value = {}
+        value[str(ctx.ID()[1])] = str(ctx.ID()[2])
+        self.memory[str(ctx.ID()[0])] = value
+        print(self.memory)
