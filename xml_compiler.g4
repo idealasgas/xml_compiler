@@ -16,6 +16,7 @@ PARSE : 'parse';
 ARRAY : 'array';
 AT : '@';
 ID : [a-z]+;
+FILENAME : [a-zA-Z|~.]+;
 NEWLINE : '\r'? '\n' ;
 ASGN : '=';
 APND_ATR : '<';
@@ -35,10 +36,9 @@ DOT : '.';
 
 
 statement: TAG SPC ID O_BKT QT ID QT C_BKT SEMICOLON NEWLINE # tag_assignment
-          | ATTR SPC ID O_BKT QT ID QT C_BKT SEMICOLON NEWLINE # attr_assignment
+          | ATTR SPC ID O_BKT QT ID QT COMMA SPC QT ID QT C_BKT SEMICOLON NEWLINE # attr_assignment
           | GEN O_BKT ID COMMA SPC QT ID QT C_BKT SEMICOLON NEWLINE # gen_file
-          | ID ROOT SEMICOLON NEWLINE # to_root
-           // либо добавить текст к тегу либо добавить значение атрибута
+          | PARSE O_BKT ID COMMA SPC QT FILENAME QT C_BKT SEMICOLON NEWLINE # parse_file
           | ID SPC ASGN SPC QT ID QT SEMICOLON NEWLINE # add_text
           | ID SPC APND_TAG SPC ID SEMICOLON NEWLINE # append_tag
           | ID SPC APND_ATR SPC ID SEMICOLON NEWLINE # append_atr
@@ -56,6 +56,8 @@ access_info: ID ARROW NAME # access_name
 print_statement: PRINT O_BKT access_info C_BKT SEMICOLON NEWLINE;
 
 search: ID SPC ASGN ID AT ID SEMICOLON NEWLINE # search_tag;
+
+//  шо делать с зарезервированными словами
 
 
 

@@ -5,7 +5,7 @@ from MyVisitor import MyVisitor
 
 if __name__ == '__main__':
     # if len(sys.argv) > 1:
-    input_stream = FileStream('example.expr')
+    input_stream = FileStream('example1.expr')
     # else:
     # input_stream = InputStream(sys.stdin.readline())
 
