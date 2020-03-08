@@ -54,3 +54,9 @@ class MyVisitor(xml_compilerVisitor):
     def visitDeclare_array(self, ctx):
         array = str(ctx.ID())
         self.file.write("{} = []\n".format(array))
+
+    def visitSearch_tag(self, ctx):
+        array = str(ctx.ID()[0])
+        root = str(ctx.ID()[1])
+        desired = str(ctx.ID()[2])
+        self.file.write("{} = {}.findall(\"{}\")".format(array, root, desired))

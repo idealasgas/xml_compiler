@@ -44,7 +44,8 @@ statement: TAG SPC ID O_BKT QT ID QT C_BKT SEMICOLON NEWLINE # tag_assignment
           | ID SPC APND_ATR SPC ID SEMICOLON NEWLINE # append_atr
           | ID SPC RMV_TAG SPC ID SEMICOLON NEWLINE # remove_tag
           | ID SPC RMV_ATR SPC ID SEMICOLON NEWLINE # remove_atr
-          | ARRAY SPC ID SEMICOLON NEWLINE # declare_array;
+          | ARRAY SPC ID SEMICOLON NEWLINE # declare_array
+          | ID SPC ASGN SPC ID AT ID SEMICOLON NEWLINE # search_tag;
 
 access_info: ID ARROW NAME # access_name
             | ID ARROW TEXT # access_text
@@ -55,10 +56,9 @@ access_info: ID ARROW NAME # access_name
 
 print_statement: PRINT O_BKT access_info C_BKT SEMICOLON NEWLINE;
 
-search: ID SPC ASGN ID AT ID SEMICOLON NEWLINE # search_tag;
 
 //  шо делать с зарезервированными словами
-
+// СДЕЛАТЬ КОММЕНТАРИИ
 
 
 
