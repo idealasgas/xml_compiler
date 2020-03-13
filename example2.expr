@@ -1,0 +1,7 @@
+parse(root, "filename.xml");
+array drinks;
+drinks = root@drink;
+attr temperatureattr("temperature", "hot");
+for (drink in drinks) {
+  drink < temperatureattr;
+}

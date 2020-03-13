@@ -7,6 +7,7 @@ class MyVisitor(xml_compilerVisitor):
         self.memory = {}
         self.file = open("file.py", "w+")
         self.file.write("from lxml import etree\n")
+        self.indentation_counter = 0
 
     # root = etree.Element('root')
     def visitTag_assignment(self, ctx):
@@ -24,7 +25,9 @@ class MyVisitor(xml_compilerVisitor):
         # tag = self.memory[str(ctx.ID()[0])]
         attribute = self.memory[str(ctx.ID()[1])]
         # tag.set(list(attribute.keys())[0], list(attribute.values())[0])
-        self.file.write("{}.set(\"{}\", \"{}\")\n".format(str(ctx.ID()[0]), list(attribute.keys())[0], list(attribute.values())[0]))
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "{}.set(\"{}\", \"{}\")\n".format(str(ctx.ID()[0]), list(attribute.keys())[0], list(attribute.values())[0]))
+        print('опа')
 
     # child.text = 'some text'
     def visitAdd_text(self, ctx):
@@ -59,4 +62,24 @@ class MyVisitor(xml_compilerVisitor):
         array = str(ctx.ID()[0])
         root = str(ctx.ID()[1])
         desired = str(ctx.ID()[2])
-        self.file.write("{} = {}.findall(\"{}\")".format(array, root, desired))
+        self.file.write("{} = {}.findall(\"{}\")\n".format(array, root, desired))
+
+    def visitFor_cycle(self, ctx):
+        item = ctx.begin_for().ID()[0].getText()
+        array = ctx.begin_for().ID()[1].getText()
+        self.file.write("for {} in {}:\n".format(item, array))
+        self.indentation_counter += 1
+        self.visitChildren(ctx)
+
+    def visitEnd(self, ctx):
+        self.indentation_counter -= 1
+
+
+
+
+
+
+
+
+        # попробовать getText вместо str()
+
