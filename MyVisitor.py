@@ -8,6 +8,7 @@ class MyVisitor(xml_compilerVisitor):
         self.file = open("file.py", "w+")
         self.file.write("from lxml import etree\n")
         self.indentation_counter = 0
+        self.body_of_function = False
 
     # root = etree.Element('root')
     def visitTag_assignment(self, ctx):
@@ -73,6 +74,16 @@ class MyVisitor(xml_compilerVisitor):
 
     def visitEnd(self, ctx):
         self.indentation_counter -= 1
+        if type(ctx.parentCtx) == xml_compilerParser.Function_declarationContext:
+            self.body_of_function = True
+            self.indentation_counter -= 1
+
+    def visitFunction_declaration(self, ctx):
+        # function_name =
+        self.body_of_function = True
+        # self.file.write("def {}({}):\n".format())
+        self.indentation_counter += 1
+        self.visitChildren(ctx)
 
 
 

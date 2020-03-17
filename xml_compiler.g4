@@ -49,7 +49,9 @@ statement: SPC* TAG SPC ID O_BKT QT ID QT C_BKT SEMICOLON NEWLINE # tag_assignme
           | SPC* ID SPC RMV_ATR SPC ID SEMICOLON NEWLINE # remove_atr
           | SPC* ARRAY SPC ID SEMICOLON NEWLINE # declare_array
           | SPC* ID SPC ASGN SPC ID AT ID SEMICOLON NEWLINE # search_tag
-          | begin_for statement+ end # for_cycle;
+          | begin_for statement+ end # for_cycle
+          | begin_function statement+ end # function_declaration
+          | ID O_BKT (ID(COMMA SPC ID)*)* C_BKT SEMICOLON NEWLINE # function_call;
 
 access_info: ID ARROW NAME # access_name
             | ID ARROW TEXT # access_text
@@ -62,11 +64,10 @@ print_statement: PRINT O_BKT access_info C_BKT SEMICOLON NEWLINE;
 
 begin_for: FOR SPC O_BKT ID SPC IN SPC ID C_BKT SPC CURLY_O_BKT NEWLINE;
 end: CURLY_C_BKT NEWLINE;
+type: TAG | ATTR | ARRAY | 'int';
+begin_function: ID O_BKT (type SPC ID (COMMA SPC type SPC ID)*)* C_BKT SPC CURLY_O_BKT NEWLINE;
 
 
 //  шо делать с зарезервированными словами
 // СДЕЛАТЬ КОММЕНТАРИИ
 // проверить удаление аттрибутов / тегов
-
-
-
