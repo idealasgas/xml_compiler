@@ -37,6 +37,7 @@ ARROW : '->';
 DOT : '.';
 CURLY_O_BKT : '{';
 CURLY_C_BKT : '}';
+HASHTAG : '#';
 
 statement: SPC* TAG SPC ID O_BKT QT ID QT C_BKT SEMICOLON NEWLINE # tag_assignment
           | SPC* ATTR SPC ID O_BKT QT ID QT COMMA SPC QT ID QT C_BKT SEMICOLON NEWLINE # attr_assignment
@@ -62,12 +63,13 @@ access_info: ID ARROW NAME # access_name
 
 print_statement: PRINT O_BKT access_info C_BKT SEMICOLON NEWLINE;
 
-begin_for: FOR SPC O_BKT ID SPC IN SPC ID C_BKT SPC CURLY_O_BKT NEWLINE;
-end: CURLY_C_BKT NEWLINE;
+begin_for: SPC* FOR SPC O_BKT ID SPC IN SPC ID C_BKT SPC CURLY_O_BKT NEWLINE;
+end: SPC* CURLY_C_BKT NEWLINE;
 type: TAG | ATTR | ARRAY | 'int';
-begin_function: ID O_BKT (type SPC ID (COMMA SPC type SPC ID)*)* C_BKT SPC CURLY_O_BKT NEWLINE;
+begin_function: SPC* ID O_BKT (type SPC ID (COMMA SPC type SPC ID)*)* C_BKT SPC CURLY_O_BKT NEWLINE;
 
 
 //  шо делать с зарезервированными словами
 // СДЕЛАТЬ КОММЕНТАРИИ
 // проверить удаление аттрибутов / тегов
+// сделать чтобы можно было просто написать пустую строку

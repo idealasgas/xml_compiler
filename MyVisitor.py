@@ -14,7 +14,8 @@ class MyVisitor(xml_compilerVisitor):
     def visitTag_assignment(self, ctx):
         value = etree.Element(str(ctx.ID()[1]))
         self.memory[str(ctx.ID()[0])] = value
-        self.file.write("{} = etree.Element('{}')\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "{} = etree.Element('{}')\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
 
     def visitAttr_assignment(self, ctx):
         value = {}
@@ -34,15 +35,18 @@ class MyVisitor(xml_compilerVisitor):
     def visitAdd_text(self, ctx):
         # tag = self.memory[str(ctx.ID()[0])]
         # tag.text = str(ctx.ID()[1])
-        self.file.write("{}.text = '{}'\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "{}.text = '{}'\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
 
     # root.append(child)
     def visitAppend_tag(self, ctx):
         # parent = self.memory[str(ctx.ID()[0])]
         # child = self.memory[str(ctx.ID()[1])]
         # parent.append(child)
-        self.file.write("{}.append({})\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "{}.append({})\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
 
+    # TODO нужно контролировать количество пробелов во второй строчке
     def visitGen_file(self, ctx):
         # filename = str(ctx.ID()[1]) + ".xml"
         # root = self.memory[str(ctx.ID()[0])]
@@ -53,35 +57,45 @@ class MyVisitor(xml_compilerVisitor):
     def visitParse_file(self, ctx):
         filename = str(ctx.FILENAME())
         root = str(ctx.ID())
-        self.file.write("tree = etree.parse(\"{}\")\n{} = tree.getroot()\n".format(filename, root))
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "tree = etree.parse(\"{}\")\n{} = tree.getroot()\n".format(filename, root))
 
     def visitDeclare_array(self, ctx):
         array = str(ctx.ID())
-        self.file.write("{} = []\n".format(array))
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "{} = []\n".format(array))
 
     def visitSearch_tag(self, ctx):
         array = str(ctx.ID()[0])
         root = str(ctx.ID()[1])
         desired = str(ctx.ID()[2])
-        self.file.write("{} = {}.findall(\"{}\")\n".format(array, root, desired))
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "{} = {}.findall(\"{}\")\n".format(array, root, desired))
 
     def visitFor_cycle(self, ctx):
         item = ctx.begin_for().ID()[0].getText()
         array = ctx.begin_for().ID()[1].getText()
-        self.file.write("for {} in {}:\n".format(item, array))
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "for {} in {}:\n".format(item, array))
         self.indentation_counter += 1
         self.visitChildren(ctx)
 
     def visitEnd(self, ctx):
         self.indentation_counter -= 1
-        if type(ctx.parentCtx) == xml_compilerParser.Function_declarationContext:
-            self.body_of_function = True
-            self.indentation_counter -= 1
+        print(str(self.indentation_counter) + 'end of function')
+        # if type(ctx.parentCtx) == xml_compilerParser.Function_declarationContext:
+        #     self.body_of_function = False
+        #     self.indentation_counter -= 1
 
     def visitFunction_declaration(self, ctx):
-        # function_name =
+        function_name = ctx.begin_function().ID()[0]
+        arguments = map(lambda x: x.getText(), list(ctx.begin_function().ID()))
+        arguments = list(arguments)
+        arguments.pop(0)
+        arguments_line = ', '.join(arguments)
         self.body_of_function = True
-        # self.file.write("def {}({}):\n".format())
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "def {}({}):\n".format(function_name, arguments_line))
         self.indentation_counter += 1
         self.visitChildren(ctx)
 
