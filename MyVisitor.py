@@ -99,6 +99,14 @@ class MyVisitor(xml_compilerVisitor):
         self.indentation_counter += 1
         self.visitChildren(ctx)
 
+    def visitFunction_call(self, ctx):
+        function_name = ctx.ID()[0]
+        arguments = map(lambda x: x.getText(), list(ctx.ID()))
+        arguments = list(arguments)
+        arguments.pop(0)
+        arguments_line = ', '.join(arguments)
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "{}({})".format(function_name, arguments_line))
 
 
 
