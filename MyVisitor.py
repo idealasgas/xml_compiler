@@ -55,10 +55,10 @@ class MyVisitor(xml_compilerVisitor):
         self.file.write("with open('{}', 'wb') as doc:\n    doc.write(etree.tostring({}, pretty_print = True))\n".format(str(ctx.STRING())[1:-1] + ".xml", str(ctx.ID())))
 
     def visitParse_file(self, ctx):
-        filename = str(ctx.FILENAME())
+        filename = str(ctx.STRING())
         root = str(ctx.ID())
         indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "tree = etree.parse(\"{}\")\n{} = tree.getroot()\n".format(filename, root))
+        self.file.write(indentation + "tree = etree.parse({})\n{} = tree.getroot()\n".format(filename, root))
 
     def visitDeclare_array(self, ctx):
         array = str(ctx.ID())
