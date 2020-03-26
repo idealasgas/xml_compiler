@@ -12,15 +12,15 @@ class MyVisitor(xml_compilerVisitor):
 
     # root = etree.Element('root')
     def visitTag_assignment(self, ctx):
-        value = etree.Element(str(ctx.ID()[1]))
-        self.memory[str(ctx.ID()[0])] = value
+        # value = etree.Element(str(ctx.ID()[1]))
+        # self.memory[str(ctx.ID()[0])] = value
         indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{} = etree.Element('{}')\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
+        self.file.write(indentation + "{} = etree.Element({})\n".format(str(ctx.ID()), str(ctx.STRING())))
 
     def visitAttr_assignment(self, ctx):
         value = {}
-        value[str(ctx.ID()[1])] = str(ctx.ID()[2])
-        self.memory[str(ctx.ID()[0])] = value
+        value[str(ctx.STRING()[0])] = str(ctx.STRING()[1])
+        self.memory[str(ctx.ID())] = value
 
     # root.set("hello", "Huhu")
     def visitAppend_atr(self, ctx):
@@ -28,7 +28,7 @@ class MyVisitor(xml_compilerVisitor):
         attribute = self.memory[str(ctx.ID()[1])]
         # tag.set(list(attribute.keys())[0], list(attribute.values())[0])
         indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{}.set(\"{}\", \"{}\")\n".format(str(ctx.ID()[0]), list(attribute.keys())[0], list(attribute.values())[0]))
+        self.file.write(indentation + "{}.set({}, {})\n".format(str(ctx.ID()[0]), list(attribute.keys())[0], list(attribute.values())[0]))
         print('опа')
 
     # child.text = 'some text'
@@ -36,7 +36,7 @@ class MyVisitor(xml_compilerVisitor):
         # tag = self.memory[str(ctx.ID()[0])]
         # tag.text = str(ctx.ID()[1])
         indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{}.text = '{}'\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
+        self.file.write(indentation + "{}.text = {}\n".format(str(ctx.ID()), str(ctx.STRING())))
 
     # root.append(child)
     def visitAppend_tag(self, ctx):
@@ -52,7 +52,7 @@ class MyVisitor(xml_compilerVisitor):
         # root = self.memory[str(ctx.ID()[0])]
         # with open(filename, 'wb') as doc:
         #     doc.write(etree.tostring(root, pretty_print = True))
-        self.file.write("with open(\"{}\", 'wb') as doc:\n    doc.write(etree.tostring({}, pretty_print = True))\n".format(str(ctx.ID()[1]) + ".xml", str(ctx.ID()[0])))
+        self.file.write("with open('{}', 'wb') as doc:\n    doc.write(etree.tostring({}, pretty_print = True))\n".format(str(ctx.STRING())[1:-1] + ".xml", str(ctx.ID())))
 
     def visitParse_file(self, ctx):
         filename = str(ctx.FILENAME())
@@ -106,13 +106,33 @@ class MyVisitor(xml_compilerVisitor):
         arguments.pop(0)
         arguments_line = ', '.join(arguments)
         indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{}({})".format(function_name, arguments_line))
+        self.file.write(indentation + "{}({})\n".format(function_name, arguments_line))
 
+    def visitAccess_name(self, ctx):
+        tag = ctx.ID().getText()
+        self.file.write("{}.tag".format(tag))
 
+    def visitAccess_text(self, ctx):
+        tag = ctx.ID().getText()
+        self.file.write("{}.text".format(tag))
 
+    # def visitAccess_value(self, ctx):
+    #     для этого нужно сделать норм память
 
+    def visitAssign_new_value(self, ctx):
+        self.visitChildren(ctx)
+        string = ctx.STRING().getText()
+        self.file.write(" = {}\n".format(string))
 
+    def visitBegin_if(self, ctx):
+        self.file.write("if ")
+        self.visitChildren(ctx)
+        self.file.write(":\n")
 
+    def visitComparison(self, ctx):
+        self.visitChildren(ctx)
+        eq = ctx.eq().getText()
+        string = ctx.STRING()
+        self.file.write("{} {}".format(eq, string))
 
-        # попробовать getText вместо str()
 
