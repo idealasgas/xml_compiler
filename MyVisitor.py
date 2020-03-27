@@ -120,19 +120,29 @@ class MyVisitor(xml_compilerVisitor):
     #     для этого нужно сделать норм память
 
     def visitAssign_new_value(self, ctx):
+        if not type(ctx.parentCtx) == xml_compilerParser.ComparisonContext:
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation)
         self.visitChildren(ctx)
         string = ctx.STRING().getText()
+
         self.file.write(" = {}\n".format(string))
 
     def visitBegin_if(self, ctx):
         self.file.write("if ")
+        self.indentation_counter += 1
         self.visitChildren(ctx)
         self.file.write(":\n")
 
     def visitComparison(self, ctx):
         self.visitChildren(ctx)
-        eq = ctx.eq().getText()
+        eq = ctx.EQ().getText()
         string = ctx.STRING()
-        self.file.write("{} {}".format(eq, string))
+        self.file.write(" {} {}".format(eq, string))
+
+    def visitElse_thing(self, ctx):
+        indentation = "    " * (self.indentation_counter - 1)
+        self.file.write(indentation + "else:\n")
+        self.visitChildren(ctx)
 
 
