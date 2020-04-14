@@ -10,75 +10,94 @@ class MyVisitor(xml_compilerVisitor):
         self.indentation_counter = 0
         self.body_of_function = False
 
-    # root = etree.Element('root')
+    # TODO МОЖЕТ БЫТЬ УЖЕ ЕСТЬ ТАКОЙ ТЕГ!!!!
     def visitTag_assignment(self, ctx):
-        # value = etree.Element(str(ctx.ID()[1]))
-        # self.memory[str(ctx.ID()[0])] = value
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{} = etree.Element({})\n".format(str(ctx.ID()), str(ctx.STRING())))
+        if str(str(ctx.ID())) in self.memory:
+            print("Tag {} already exists".format(str(ctx.ID())))
+        else:
+            self.memory[str(ctx.ID())] = 'tag'
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "{} = etree.Element({})\n".format(str(ctx.ID()), str(ctx.STRING())))
 
     def visitAttr_assignment(self, ctx):
-        value = {}
-        value[str(ctx.STRING()[0])] = str(ctx.STRING()[1])
-        self.memory[str(ctx.ID())] = value
+        if str(ctx.ID()) in self.memory:
+            print("Variable {} already exists".format(str(ctx.ID())))
+        else:
+            value = {}
+            value[str(ctx.STRING()[0])] = str(ctx.STRING()[1])
+            self.memory[str(ctx.ID())] = value
 
-    # root.set("hello", "Huhu")
     def visitAppend_atr(self, ctx):
-        # tag = self.memory[str(ctx.ID()[0])]
-        attribute = self.memory[str(ctx.ID()[1])]
-        # tag.set(list(attribute.keys())[0], list(attribute.values())[0])
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{}.set({}, {})\n".format(str(ctx.ID()[0]), list(attribute.keys())[0], list(attribute.values())[0]))
-        print('опа')
+        if (str(ctx.ID()[0]) in self.memory) and (str(ctx.ID()[1]) in self.memory):
+            attribute = self.memory[str(ctx.ID()[1])]
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "{}.set({}, {})\n".format(str(ctx.ID()[0]), list(attribute.keys())[0], list(attribute.values())[0]))
+        else:
+            print('Undefined variables {} and/or {}'.format(str(ctx.ID()[0]), str(ctx.ID()[1])))
 
-    # child.text = 'some text'
     def visitAdd_text(self, ctx):
-        # tag = self.memory[str(ctx.ID()[0])]
-        # tag.text = str(ctx.ID()[1])
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{}.text = {}\n".format(str(ctx.ID()), str(ctx.STRING())))
+        if str(ctx.ID()) in self.memory:
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "{}.text = {}\n".format(str(ctx.ID()), str(ctx.STRING())))
+        else:
+            print('Undefined variable {}'.format(str(ctx.ID())))
 
-    # root.append(child)
     def visitAppend_tag(self, ctx):
-        # parent = self.memory[str(ctx.ID()[0])]
-        # child = self.memory[str(ctx.ID()[1])]
-        # parent.append(child)
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{}.append({})\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
+        if (str(ctx.ID()[0]) in self.memory) and (str(ctx.ID()[1]) in self.memory):
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "{}.append({})\n".format(str(ctx.ID()[0]), str(ctx.ID()[1])))
+        else:
+            print('Undefined variables {} and/or {}'.format(str(ctx.ID()[0]), str(ctx.ID()[1])))
 
-    # TODO нужно контролировать количество пробелов во второй строчке
     def visitGen_file(self, ctx):
-        # filename = str(ctx.ID()[1]) + ".xml"
-        # root = self.memory[str(ctx.ID()[0])]
-        # with open(filename, 'wb') as doc:
-        #     doc.write(etree.tostring(root, pretty_print = True))
-        self.file.write("with open('{}', 'wb') as doc:\n    doc.write(etree.tostring({}, pretty_print = True))\n".format(str(ctx.STRING())[1:-1] + ".xml", str(ctx.ID())))
+        if str(ctx.ID()) in self.memory:
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "with open('{}', 'wb') as doc:\n".format(str(ctx.STRING())[1:-1] + ".xml"))
+            self.file.write(indentation + '    ' + "doc.write(etree.tostring({}, pretty_print = True))\n".format(str(ctx.ID())))
+        else:
+            print('Undefined variable {}'.format(str(ctx.ID())))
 
     def visitParse_file(self, ctx):
-        filename = str(ctx.STRING())
-        root = str(ctx.ID())
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "tree = etree.parse({})\n{} = tree.getroot()\n".format(filename, root))
+        if str(ctx.ID()) in self.memory:
+            print('Variable {} already exists'.format(str(ctx.ID())))
+        else:
+            filename = str(ctx.STRING())
+            root = str(ctx.ID())
+            self.memory[root] = 'tag'
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "tree = etree.parse({})\n".format(filename))
+            self.file.write(indentation + "{} = tree.getroot()\n".format(root))
 
     def visitDeclare_array(self, ctx):
-        array = str(ctx.ID())
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{} = []\n".format(array))
+        if str(ctx.ID()) in self.memory:
+            print('Variable {} already exists'.format(str(ctx.ID())))
+        else:
+            self.memory[str(ctx.ID())] = 'array'
+            array = str(ctx.ID())
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "{} = []\n".format(array))
 
     def visitSearch_tag(self, ctx):
-        array = str(ctx.ID()[0])
-        root = str(ctx.ID()[1])
-        desired = str(ctx.ID()[2])
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{} = {}.findall(\"{}\")\n".format(array, root, desired))
+        if (str(ctx.ID()[0]) in self.memory) and (str(ctx.ID()[1]) in self.memory):
+            array = str(ctx.ID()[0])
+            root = str(ctx.ID()[1])
+            desired = str(ctx.ID()[2])
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "{} = {}.findall(\"{}\")\n".format(array, root, desired))
+        else:
+            print('Undefined variable {} and/or {}'.format(str(ctx.ID()[0]), str(ctx.ID()[1])))
 
     def visitFor_cycle(self, ctx):
-        item = ctx.begin_for().ID()[0].getText()
-        array = ctx.begin_for().ID()[1].getText()
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "for {} in {}:\n".format(item, array))
-        self.indentation_counter += 1
-        self.visitChildren(ctx)
+        if ctx.begin_for().ID()[1].getText() in self.memory:
+            item = ctx.begin_for().ID()[0].getText()
+            self.memory[item] = 'iterator'
+            array = ctx.begin_for().ID()[1].getText()
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "for {} in {}:\n".format(item, array))
+            self.indentation_counter += 1
+            self.visitChildren(ctx)
+        else:
+            print('Undefined variable {}'.format(ctx.begin_for().ID()[1].getText()))
 
     def visitEnd(self, ctx):
         self.indentation_counter -= 1
@@ -87,37 +106,57 @@ class MyVisitor(xml_compilerVisitor):
         #     self.body_of_function = False
         #     self.indentation_counter -= 1
 
+    # добавить в память название функции
     def visitFunction_declaration(self, ctx):
-        function_name = ctx.begin_function().ID()[0]
-        arguments = map(lambda x: x.getText(), list(ctx.begin_function().ID()))
-        arguments = list(arguments)
-        arguments.pop(0)
-        arguments_line = ', '.join(arguments)
-        self.body_of_function = True
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "def {}({}):\n".format(function_name, arguments_line))
-        self.indentation_counter += 1
-        self.visitChildren(ctx)
+        if str(ctx.begin_function().ID()[0]) in self.memory:
+            print('Variable {} already exists'.format(str(ctx.begin_function().ID()[0])))
+        else:
+            function_name = ctx.begin_function().ID()[0]
+            self.memory[function_name] = 'function'
+            arguments = map(lambda x: x.getText(), list(ctx.begin_function().ID()))
+            arguments = list(arguments)
+            for argument in arguments:
+                self.memory[argument] = 'function parameter'
+            arguments.pop(0)
+            arguments_line = ', '.join(arguments)
+            self.body_of_function = True
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "def {}({}):\n".format(function_name, arguments_line))
+            self.indentation_counter += 1
+            self.visitChildren(ctx)
 
+    # TODO проверять параметры функции
     def visitFunction_call(self, ctx):
-        function_name = ctx.ID()[0]
-        arguments = map(lambda x: x.getText(), list(ctx.ID()))
-        arguments = list(arguments)
-        arguments.pop(0)
-        arguments_line = ', '.join(arguments)
-        indentation = "    " * self.indentation_counter
-        self.file.write(indentation + "{}({})\n".format(function_name, arguments_line))
+        if str(ctx.ID()[0]) in self.memory:
+            function_name = str(ctx.ID()[0])
+            arguments = map(lambda x: x.getText(), list(ctx.ID()))
+            arguments = list(arguments)
+            for argument in arguments:
+                if not(argument in self.memory):
+                    print('Undefined variable {}'.format(argument))
+            arguments.pop(0)
+            arguments_line = ', '.join(arguments)
+            indentation = "    " * self.indentation_counter
+            self.file.write(indentation + "{}({})\n".format(function_name, arguments_line))
+        else:
+            print('Undefined variable {}'.format(str(ctx.ID()[0])))
 
     def visitAccess_name(self, ctx):
-        tag = ctx.ID().getText()
-        self.file.write("{}.tag".format(tag))
+        if ctx.ID().getText() in self.memory:
+            tag = ctx.ID().getText()
+            self.file.write("{}.tag".format(tag))
+        else:
+            print('Undefined variable {}'.format(ctx.ID().getText()))
 
     def visitAccess_text(self, ctx):
-        tag = ctx.ID().getText()
-        self.file.write("{}.text".format(tag))
+        if ctx.ID().getText() in self.memory:
+            tag = ctx.ID().getText()
+            self.file.write("{}.text".format(tag))
+        else:
+            print('Undefined variable {}'.format(ctx.ID().getText()))
 
     # def visitAccess_value(self, ctx):
-    #     для этого нужно сделать норм память
+    #     для этого нужно сделать норм память, вообще это бред мне кажется
 
     def visitAssign_new_value(self, ctx):
         if not type(ctx.parentCtx) == xml_compilerParser.ComparisonContext:
