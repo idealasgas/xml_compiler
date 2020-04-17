@@ -3,10 +3,9 @@ from xml_compilerVisitor import xml_compilerVisitor
 from xml_compilerParser import xml_compilerParser
 
 class MyVisitor(xml_compilerVisitor):
-    def __init__(self):
+    def __init__(self, file):
         self.memory = {}
-        self.file = open("file.py", "w+")
-        self.file.write("from lxml import etree\n")
+        self.file = file
         self.indentation_counter = 0
         self.body_of_function = False
 
@@ -106,40 +105,40 @@ class MyVisitor(xml_compilerVisitor):
         #     self.body_of_function = False
         #     self.indentation_counter -= 1
 
-    # добавить в память название функции
     def visitFunction_declaration(self, ctx):
-        if str(ctx.begin_function().ID()[0]) in self.memory:
-            print('Variable {} already exists'.format(str(ctx.begin_function().ID()[0])))
-        else:
-            function_name = ctx.begin_function().ID()[0]
-            self.memory[function_name] = 'function'
-            arguments = map(lambda x: x.getText(), list(ctx.begin_function().ID()))
-            arguments = list(arguments)
-            for argument in arguments:
-                self.memory[argument] = 'function parameter'
-            arguments.pop(0)
-            arguments_line = ', '.join(arguments)
-            self.body_of_function = True
-            indentation = "    " * self.indentation_counter
-            self.file.write(indentation + "def {}({}):\n".format(function_name, arguments_line))
-            self.indentation_counter += 1
-            self.visitChildren(ctx)
+        # if str(ctx.begin_function().ID()[0]) in self.memory:
+        #     print('Variable {} already exists'.format(str(ctx.begin_function().ID()[0])))
+        # else:
+        #     function_name = ctx.begin_function().ID()[0]
+        #     self.memory[function_name] = 'function'
+        #     arguments = map(lambda x: x.getText(), list(ctx.begin_function().ID()))
+        #     arguments = list(arguments)
+        #     for argument in arguments:
+        #         self.memory[argument] = 'function parameter'
+        #     arguments.pop(0)
+        #     arguments_line = ', '.join(arguments)
+        #     self.body_of_function = True
+        #     indentation = "    " * self.indentation_counter
+        #     self.file.write(indentation + "def {}({}):\n".format(function_name, arguments_line))
+        #     self.indentation_counter += 1
+        #     self.visitChildren(ctx)
+        print('зашла в определение функции')
 
     # TODO проверять параметры функции
     def visitFunction_call(self, ctx):
-        if str(ctx.ID()[0]) in self.memory:
+        # if str(ctx.ID()[0]) in self.memory:
             function_name = str(ctx.ID()[0])
             arguments = map(lambda x: x.getText(), list(ctx.ID()))
             arguments = list(arguments)
-            for argument in arguments:
-                if not(argument in self.memory):
-                    print('Undefined variable {}'.format(argument))
+            # for argument in arguments:
+            #     if not(argument in self.memory):
+            #         print('Undefined variable {}'.format(argument))
             arguments.pop(0)
             arguments_line = ', '.join(arguments)
             indentation = "    " * self.indentation_counter
             self.file.write(indentation + "{}({})\n".format(function_name, arguments_line))
-        else:
-            print('Undefined variable {}'.format(str(ctx.ID()[0])))
+        # else:
+        #     print('Undefined variable {}'.format(str(ctx.ID()[0])))
 
     def visitAccess_name(self, ctx):
         if ctx.ID().getText() in self.memory:
