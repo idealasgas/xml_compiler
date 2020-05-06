@@ -15,7 +15,7 @@ After appending attribute privet to any tag will result in
 ```xml
 <document dela="normalno"></document>
 ```
-## Add text to tag
+## Add Text to Tag
 ```
 node child("child");
 child = "fine";
@@ -24,7 +24,7 @@ Makes XML like this
 ```xml
 <child>fine</child>
 ```
-## Append tag
+## Append Tag
 ```
 root << child;
 ```
@@ -34,13 +34,28 @@ Appends child to root like this
   <child></child>
 </document>
 ```
-## Append attribute
+## Append Attribute
 ```
 root < privet;
 ```
 ```xml
 <document dela="normalno"></document>
 ```
+## Remove Tag
+```
+node root("document");
+array bad;
+bad = root@bad;
+for (tag in bad) {
+  root >> tag;
+}
+```
+Code above will find all `<bad></bad>` tags and remove them from root.
+## Remove Attribute
+```
+root > privet;
+```
+Removes privet-attribute from root-node.
 ## Generate XML File
 ```
 generate(root, "filename");
@@ -87,4 +102,17 @@ function(node tag) {
   attr attribute("lol", "kek");
   tag < attribute;
 }
+```
+## Print
+Works like this.
+```
+node document("document");
+document = "AaAaAaAaA";
+print(document->text);
+```
+By the way `document->text` reveals content of document tag, `document->name` reveals name of tag.
+## Comments
+Ruby-style comments like this.
+```
+# хорошего дня!
 ```
