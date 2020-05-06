@@ -6,7 +6,7 @@ from FunctionVisitor import FunctionVisitor
 
 if __name__ == '__main__':
     # if len(sys.argv) > 1:
-    input_stream = FileStream('example6.expr')
+    input_stream = FileStream('example9.expr')
     # else:
     # input_stream = InputStream(sys.stdin.readline())
 

@@ -66,8 +66,6 @@ statement: SPC* TAG SPC ID O_BKT STRING C_BKT SEMICOLON NEWLINE # tag_assignment
 access_info: ID ARROW NAME # access_name
             | ID ARROW TEXT # access_text
             | ID ARROW VALUE # access_value;
-            //| ID ARROW NODES # access_nodes
-            //| ID ARROW ATTRS # access_attrs
 
 print_statement: PRINT O_BKT access_info C_BKT SEMICOLON NEWLINE;
 
@@ -79,9 +77,3 @@ begin_if: IF SPC O_BKT comparison C_BKT SPC CURLY_O_BKT NEWLINE;
 comparison: access_info SPC (EQ|NOT) SPC STRING;
 else_thing: CURLY_C_BKT SPC ELSE SPC CURLY_O_BKT NEWLINE;
 comment: HASHTAG .*? NEWLINE;
-
-//  шо делать с зарезервированными словами
-// СДЕЛАТЬ КОММЕНТАРИИ
-// проверить удаление аттрибутов / тегов
-// сделать чтобы можно было просто написать пустую строку
-// ошибки

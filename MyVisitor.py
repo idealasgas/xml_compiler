@@ -190,15 +190,23 @@ class MyVisitor(xml_compilerVisitor):
         self.file.write(")\n")
 
     def visitRemove_tag(self, ctx):
-        indentation = '    ' * self.indentation_counter
-        tag = ctx.ID()[1].getText()
-        self.file.write(indentation + '{}.getparent().remove({})\n'.format(tag, tag))
+        if (ctx.ID()[0].getText() in self.memory) and (ctx.ID()[1].getText() in self.memory):
+            indentation = '    ' * self.indentation_counter
+            tag = ctx.ID()[1].getText()
+            self.file.write(indentation + '{}.getparent().remove({})\n'.format(tag, tag))
+        else:
+            print("Undefined variable {} or {}.".format(ctx.ID()[0].getText(), ctx.ID()[1].getText()))
 
     def visitRemove_atr(self, ctx):
-        indentation = '    ' * self.indentation_counter
-        tag = ctx.ID()[0].getText()
-        attribute = self.memory[ctx.ID()[1].getText()]
-        key_of_attribute = list(attribute.keys())[0]
-        self.file.write(indentation + "{}.attrib.pop({})\n".format(tag, key_of_attribute))
+        if (ctx.ID()[0].getText() in self.memory) and (ctx.ID()[1].getText() in self.memory):
+            indentation = '    ' * self.indentation_counter
+            tag = ctx.ID()[0].getText()
+            attribute = self.memory[ctx.ID()[1].getText()]
+            key_of_attribute = list(attribute.keys())[0]
+            self.file.write(indentation + "{}.attrib.pop({})\n".format(tag, key_of_attribute))
+        else:
+            print("Undefined variable {} or {}. Think for yourself.".format(ctx.ID()[1].getText(), ctx.ID()[0].getText()))
+
+
 
 
