@@ -194,4 +194,11 @@ class MyVisitor(xml_compilerVisitor):
         tag = ctx.ID()[1].getText()
         self.file.write(indentation + '{}.getparent().remove({})\n'.format(tag, tag))
 
+    def visitRemove_atr(self, ctx):
+        indentation = '    ' * self.indentation_counter
+        tag = ctx.ID()[0].getText()
+        attribute = self.memory[ctx.ID()[1].getText()]
+        key_of_attribute = list(attribute.keys())[0]
+        self.file.write(indentation + "{}.attrib.pop({})\n".format(tag, key_of_attribute))
+
 
