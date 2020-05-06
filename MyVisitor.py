@@ -184,9 +184,14 @@ class MyVisitor(xml_compilerVisitor):
         self.visitChildren(ctx)
 
     def visitPrint(self, ctx):
-        indentation = "    " * (self.indentation_counter - 1)
+        indentation = "    " * self.indentation_counter
         self.file.write(indentation + "print(")
         self.visitChildren(ctx)
         self.file.write(")\n")
+
+    def visitRemove_tag(self, ctx):
+        indentation = '    ' * self.indentation_counter
+        tag = ctx.ID()[1].getText()
+        self.file.write(indentation + '{}.getparent().remove({})\n'.format(tag, tag))
 
 
