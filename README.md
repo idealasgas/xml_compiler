@@ -113,6 +113,6 @@ print(document->text);
 By the way `document->text` reveals content of document tag, `document->name` reveals name of tag.
 ## Comments
 Ruby-style comments like this.
-```
+```ruby
 # хорошего дня!
 ```
