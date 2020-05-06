@@ -10,7 +10,6 @@ class FunctionVisitor(xml_compilerVisitor):
         self.indentation_counter = 0
         self.body_of_function = 0
 
-    # TODO МОЖЕТ БЫТЬ УЖЕ ЕСТЬ ТАКОЙ ТЕГ!!!!
     def visitTag_assignment(self, ctx):
         if self.body_of_function:
             if str(str(ctx.ID())) in self.memory:
@@ -112,14 +111,10 @@ class FunctionVisitor(xml_compilerVisitor):
     def visitEnd(self, ctx):
         if self.body_of_function:
             self.indentation_counter -= 1
-            print(str(self.indentation_counter) + 'end of function')
             if type(ctx.parentCtx) == xml_compilerParser.Function_declarationContext:
                 self.body_of_function = False
 
     def visitFunction_declaration(self, ctx):
-        # if str(ctx.begin_function().ID()[0]) in self.memory:
-        #     print('Variable {} already exists'.format(str(ctx.begin_function().ID()[0])))
-        # else:
         self.body_of_function = True
         function_name = ctx.begin_function().ID()[0]
         self.memory[function_name] = 'function'
@@ -135,7 +130,6 @@ class FunctionVisitor(xml_compilerVisitor):
         self.indentation_counter += 1
         self.visitChildren(ctx)
 
-    # TODO проверять параметры функции
     def visitFunction_call(self, ctx):
         if self.body_of_function:
             if str(ctx.ID()[0]) in self.memory:
@@ -168,9 +162,6 @@ class FunctionVisitor(xml_compilerVisitor):
             else:
                 print('Undefined variable {}'.format(ctx.ID().getText()))
 
-    # def visitAccess_value(self, ctx):
-    #     для этого нужно сделать норм память, вообще это бред мне кажется
-
     def visitAssign_new_value(self, ctx):
         if self.body_of_function:
             if not type(ctx.parentCtx) == xml_compilerParser.ComparisonContext:
@@ -200,5 +191,3 @@ class FunctionVisitor(xml_compilerVisitor):
             indentation = "    " * (self.indentation_counter - 1)
             self.file.write(indentation + "else:\n")
             self.visitChildren(ctx)
-
-

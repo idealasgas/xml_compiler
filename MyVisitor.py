@@ -9,7 +9,6 @@ class MyVisitor(xml_compilerVisitor):
         self.indentation_counter = 0
         self.body_of_function = False
 
-    # TODO МОЖЕТ БЫТЬ УЖЕ ЕСТЬ ТАКОЙ ТЕГ!!!!
     def visitTag_assignment(self, ctx):
         if str(str(ctx.ID())) in self.memory:
             print("Tag {} already exists".format(str(ctx.ID())))
@@ -100,45 +99,15 @@ class MyVisitor(xml_compilerVisitor):
 
     def visitEnd(self, ctx):
         self.indentation_counter -= 1
-        print(str(self.indentation_counter) + 'end of function')
-        # if type(ctx.parentCtx) == xml_compilerParser.Function_declarationContext:
-        #     self.body_of_function = False
-        #     self.indentation_counter -= 1
 
-    def visitFunction_declaration(self, ctx):
-        # if str(ctx.begin_function().ID()[0]) in self.memory:
-        #     print('Variable {} already exists'.format(str(ctx.begin_function().ID()[0])))
-        # else:
-        #     function_name = ctx.begin_function().ID()[0]
-        #     self.memory[function_name] = 'function'
-        #     arguments = map(lambda x: x.getText(), list(ctx.begin_function().ID()))
-        #     arguments = list(arguments)
-        #     for argument in arguments:
-        #         self.memory[argument] = 'function parameter'
-        #     arguments.pop(0)
-        #     arguments_line = ', '.join(arguments)
-        #     self.body_of_function = True
-        #     indentation = "    " * self.indentation_counter
-        #     self.file.write(indentation + "def {}({}):\n".format(function_name, arguments_line))
-        #     self.indentation_counter += 1
-        #     self.visitChildren(ctx)
-        print('зашла в определение функции')
-
-    # TODO проверять параметры функции
     def visitFunction_call(self, ctx):
-        # if str(ctx.ID()[0]) in self.memory:
-            function_name = str(ctx.ID()[0])
-            arguments = map(lambda x: x.getText(), list(ctx.ID()))
-            arguments = list(arguments)
-            # for argument in arguments:
-            #     if not(argument in self.memory):
-            #         print('Undefined variable {}'.format(argument))
-            arguments.pop(0)
-            arguments_line = ', '.join(arguments)
-            indentation = "    " * self.indentation_counter
-            self.file.write(indentation + "{}({})\n".format(function_name, arguments_line))
-        # else:
-        #     print('Undefined variable {}'.format(str(ctx.ID()[0])))
+        function_name = str(ctx.ID()[0])
+        arguments = map(lambda x: x.getText(), list(ctx.ID()))
+        arguments = list(arguments)
+        arguments.pop(0)
+        arguments_line = ', '.join(arguments)
+        indentation = "    " * self.indentation_counter
+        self.file.write(indentation + "{}({})\n".format(function_name, arguments_line))
 
     def visitAccess_name(self, ctx):
         if ctx.ID().getText() in self.memory:
@@ -153,9 +122,6 @@ class MyVisitor(xml_compilerVisitor):
             self.file.write("{}.text".format(tag))
         else:
             print('Undefined variable {}'.format(ctx.ID().getText()))
-
-    # def visitAccess_value(self, ctx):
-    #     для этого нужно сделать норм память, вообще это бред мне кажется
 
     def visitAssign_new_value(self, ctx):
         if not type(ctx.parentCtx) == xml_compilerParser.ComparisonContext:
@@ -207,6 +173,5 @@ class MyVisitor(xml_compilerVisitor):
         else:
             print("Undefined variable {} or {}. Think for yourself.".format(ctx.ID()[1].getText(), ctx.ID()[0].getText()))
 
-
-
-
+    def visitFunction_declaration(self, ctx):
+        print("Function detected (but it's ok)")
