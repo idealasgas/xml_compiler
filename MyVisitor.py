@@ -183,4 +183,10 @@ class MyVisitor(xml_compilerVisitor):
         self.file.write(indentation + "else:\n")
         self.visitChildren(ctx)
 
+    def visitPrint(self, ctx):
+        indentation = "    " * (self.indentation_counter - 1)
+        self.file.write(indentation + "print(")
+        self.visitChildren(ctx)
+        self.file.write(")\n")
+
 
