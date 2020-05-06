@@ -1,0 +1,6 @@
+node root("document");
+array bad;
+bad = root@bad;
+for (tag in bad) {
+  root >> tag;
+}

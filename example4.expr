@@ -1,0 +1,7 @@
+node tag("fruit");
+if (tag->name == "fruit") {
+    tag->name = "kiwi";
+} else {
+    tag->name = "ne";
+}
+tag->name = "ne";

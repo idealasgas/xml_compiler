@@ -1,0 +1,8 @@
+node document("document");
+function(document);
+function(node tag) {
+  attr attribute("lol", "kek");
+  tag < attribute;
+  node tak("tak");
+  node privet("privet");
+}

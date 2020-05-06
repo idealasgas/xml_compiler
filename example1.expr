@@ -1,0 +1,7 @@
+node root("document");
+attr privet("attribute", "hello");
+root < privet;
+node child("child");
+child = "fine";
+root << child;
+generate(root, "filename");

@@ -1,0 +1,3 @@
+node document("document");
+document = "AaAaAaAaA";
+print(document->text);

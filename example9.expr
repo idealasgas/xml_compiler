@@ -1,0 +1,5 @@
+node root("document");
+attr privet("attribute", "hello");
+root < privet;
+
+root > privet;
