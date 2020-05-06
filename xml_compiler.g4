@@ -59,7 +59,9 @@ statement: SPC* TAG SPC ID O_BKT STRING C_BKT SEMICOLON NEWLINE # tag_assignment
           | begin_function statement+ end # function_declaration
           | ID O_BKT (ID(COMMA SPC ID)*)* C_BKT SEMICOLON NEWLINE # function_call
           | begin_if statement+ (else_thing statement+)? end # if_declaration
-          | SPC* access_info SPC ASGN SPC STRING SEMICOLON NEWLINE # assign_new_value;
+          | SPC* access_info SPC ASGN SPC STRING SEMICOLON NEWLINE # assign_new_value
+          | comment # comment_fun
+          | print_statement # print;
 
 access_info: ID ARROW NAME # access_name
             | ID ARROW TEXT # access_text
@@ -76,7 +78,7 @@ begin_function: SPC* ID O_BKT (datatype SPC ID (COMMA SPC datatype SPC ID)*)* C_
 begin_if: IF SPC O_BKT comparison C_BKT SPC CURLY_O_BKT NEWLINE;
 comparison: access_info SPC (EQ|NOT) SPC STRING;
 else_thing: CURLY_C_BKT SPC ELSE SPC CURLY_O_BKT NEWLINE;
-
+comment: HASHTAG .*? NEWLINE;
 
 //  шо делать с зарезервированными словами
 // СДЕЛАТЬ КОММЕНТАРИИ
