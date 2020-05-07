@@ -1,5 +1,5 @@
 # XML Compiler
-Welcome! I present you world's first compiler from non-existing language into Python written by me.
+Hello stranger! I present you world's first compiler from non-existing language into Python written by me.
 ## Run
 ```bash
 git clone git@github.com:idealasgas/xml_compiler.git
