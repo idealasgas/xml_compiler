@@ -4,7 +4,7 @@ Hello stranger! I present you world's first compiler from non-existing language 
 ```bash
 git clone git@github.com:idealasgas/xml_compiler.git
 cd xml_compiler
-please_compile.bat file
+compile_please.bat file
 ```
 `file` is the name of file you want to compile.
 ## Main syntax
